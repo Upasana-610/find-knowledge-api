@@ -12,6 +12,9 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const cors = require("cors");
+
+const AppError = require("./utils/appError");
+
 const teacherRoutes = require("./routes/teacherRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");

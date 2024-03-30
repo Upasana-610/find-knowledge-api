@@ -4,72 +4,99 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { ObjectId } = require("mongodb");
 
-const studentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Please tell us your name"],
-  },
-  email: {
-    type: String,
-    required: [true, "Please provide your email"],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, "Please provide a valid email"],
-  },
-  password: {
-    type: String,
-    required: [true, "Please provide a password"],
-    minlength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      validator: function(el) {
-        return el === this.password;
-      },
-      message: "Password are not the same",
+const studentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please tell us your name"],
     },
+    email: {
+      type: String,
+      required: [true, "Please provide your email"],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, "Please provide a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "Please provide a password"],
+      minlength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        validator: function(el) {
+          return el === this.password;
+        },
+        message: "Password are not the same",
+      },
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    AdditionalDetails: String,
+    subscribedTeachers: [
+      {
+        teacherprofileId: {
+          type: ObjectId,
+          ref: "teacherprofiles",
+        },
+        subscribedentrymessage: {
+          type: String,
+          required: [true, "You must provide a entry message."],
+        },
+        joiningDate: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
+    PendingRequestSent: [
+      {
+        teacherprofileId: {
+          type: ObjectId,
+          ref: "teacherprofiles",
+        },
+        pendingentrymessage: {
+          type: String,
+          required: [true, "You must provide a entry message."],
+        },
+      },
+    ],
+    pastTeachers: [
+      {
+        teacherprofileId: {
+          type: ObjectId,
+          ref: "teacherprofiles",
+        },
+        pastentrymessage: {
+          type: String,
+          required: [true, "You must provide a entry message."],
+        },
+        pastleavingmessage: {
+          type: String,
+          required: [true, "You must provide a leaving message."],
+        },
+        leavingDate: {
+          type: Date,
+          default: Date.now(),
+        },
+        pastjoiningDate: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-  AdditionalDetails: String,
-  subscribedTeachers: [
-    {
-      profileId: {
-        type: ObjectId,
-        ref: "teacherprofiles",
-      },
-      entrymessage: String,
-    },
-  ],
-  PendingRequestSent: [
-    {
-      profileId: {
-        type: ObjectId,
-        ref: "teacherprofiles",
-      },
-      entrymessage: String,
-    },
-  ],
-  pastTeachers: [
-    {
-      profileId: {
-        type: ObjectId,
-        ref: "teacherprofiles",
-      },
-      entrymessage: String,
-      leavingmessage: String,
-    },
-  ],
-});
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
 
 studentSchema.pre("save", async function(next) {
   if (!this.isModified("password")) return next();
@@ -121,20 +148,19 @@ studentSchema.methods.createPasswordResetToken = function() {
 };
 
 studentSchema.pre(/^find/, function(next) {
-  this.populate(
-    {
-      path: "subscribedTeachers.profileId",
+  this.populate({
+    path: "subscribedTeachers.teacherprofileId",
+    select: ["_id", "username", "category", "subcategory"],
+  })
+    .populate({
+      path: "PendingRequestSent.teacherprofileId",
       select: ["_id", "username", "category", "subcategory"],
-    },
-    {
-      path: "PendingRequestSent.profileId",
+    })
+    .populate({
+      path: "pastTeachers.teacherprofileId",
       select: ["_id", "username", "category", "subcategory"],
-    },
-    {
-      path: "pastTeachers.profileId",
-      select: ["_id", "username", "category", "subcategory"],
-    }
-  );
+    });
+
   next();
 });
 

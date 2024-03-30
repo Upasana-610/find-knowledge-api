@@ -4,51 +4,54 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { ObjectId } = require("mongodb");
 
-const teacherSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Please tell us your name"],
-  },
-  email: {
-    type: String,
-    required: [true, "Please provide your email"],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, "Please provide a valid email"],
-  },
-  password: {
-    type: String,
-    required: [true, "Please provide a password"],
-    minlength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Please confirm your password"],
-    validate: {
-      validator: function(el) {
-        return el === this.password;
-      },
-      message: "Password are not the same",
+const teacherSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Please tell us your name"],
     },
-  },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-  teacherProfiles: [
-    {
-      profileId: {
-        type: ObjectId,
-        ref: "teacherprofiles",
+    email: {
+      type: String,
+      required: [true, "Please provide your email"],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, "Please provide a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "Please provide a password"],
+      minlength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password"],
+      validate: {
+        validator: function(el) {
+          return el === this.password;
+        },
+        message: "Password are not the same",
       },
     },
-  ],
-});
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    teacherProfiles: [
+      {
+        profileId: {
+          type: ObjectId,
+          ref: "teacherprofiles",
+        },
+      },
+    ],
+  },
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
 
 teacherSchema.pre(/^find/, function(next) {
   this.populate({

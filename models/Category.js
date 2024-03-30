@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
 
-const categorySchema = new mongoose.Schema({
-  category: {
-    type: String,
-    required: true,
-  },
-  subcategories: [
-    {
-      Subcategory: {
-        type: String,
-      },
+const categorySchema = new mongoose.Schema(
+  {
+    category: {
+      type: String,
+      required: true,
     },
-  ],
-});
+    subcategories: [
+      {
+        Subcategory: {
+          type: String,
+        },
+      },
+    ],
+  },
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
 
 categorySchema.index(
   { SubCategory: 1 },
