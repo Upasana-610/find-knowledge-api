@@ -43,10 +43,8 @@ const teacherSchema = new mongoose.Schema(
     },
     teacherProfiles: [
       {
-        profileId: {
-          type: ObjectId,
-          ref: "teacherprofiles",
-        },
+        type: ObjectId,
+        ref: "teacherProfiles",
       },
     ],
   },
@@ -55,7 +53,15 @@ const teacherSchema = new mongoose.Schema(
 
 teacherSchema.pre(/^find/, function(next) {
   this.populate({
-    path: "teacherProfiles.profileId",
+    path: "teacherProfiles",
+    select: ["_id", "username", "category", "subcategory"],
+  });
+  next();
+});
+
+teacherSchema.pre("save", function(next) {
+  this.populate({
+    path: "teacherProfiles",
     select: ["_id", "username", "category", "subcategory"],
   });
   next();

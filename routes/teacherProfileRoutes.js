@@ -4,9 +4,6 @@ const teacherProfile = require("../controllers/teacherProfilecontroller");
 
 const router = express.Router();
 
-router
-  .route("/create")
-  .post(teacherProfile.createTeacherProfile)
-  .patch(teacherProfile.addTeacherProfileToTeacher);
+router.post("/create", teacherProfile.createTeacherProfile);
 
 module.exports = router;

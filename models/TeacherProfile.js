@@ -4,6 +4,8 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { ObjectId } = require("mongodb");
 const { group } = require("console");
+const Teacher = require("../models/Teacher");
+const AppError = require(".././utils/appError");
 
 const teacherProfileSchema = new mongoose.Schema(
   {
