@@ -78,26 +78,20 @@ const teacherProfileSchema = new mongoose.Schema(
     AdditionalDetails: String,
     pendingRequests: [
       {
-        studentId: {
-          type: ObjectId,
-          ref: "students",
-        },
+        type: ObjectId,
+        ref: "students",
       },
     ],
     currentStudents: [
       {
-        studentId: {
-          type: ObjectId,
-          ref: "students",
-        },
+        type: ObjectId,
+        ref: "students",
       },
     ],
     pastStudents: [
       {
-        studentId: {
-          type: ObjectId,
-          ref: "students",
-        },
+        type: ObjectId,
+        ref: "students",
       },
     ],
     createdAt: {
@@ -108,45 +102,45 @@ const teacherProfileSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-teacherProfileSchema.pre(/^find/, function(next) {
-  this.populate({
-    path: "pendingRequests.studentId",
-    select: ["_id", "name", "AdditionalDetails"],
-  })
-    .populate({
-      path: "pendingRequests.studentId",
-      match: { "PendingRequestSent.teacherprofileId": { $eq: this._id } },
-      select: ["PendingRequestSent.pendingentrymessage"],
-    })
-    .populate({
-      path: "currentStudents.studentId",
-      select: ["_id", "name", "AdditionalDetails"],
-    })
-    .populate({
-      path: "currentStudents.studentId",
-      match: { "subscribedTeachers.teacherprofileId": { $eq: this._id } },
-      select: [
-        "subscribedTeachers.subscribedentrymessage",
-        "subscribedTeachers.joiningDate",
-      ],
-    })
-    .populate({
-      path: "pastStudents.studentId",
-      select: ["_id", "name", "AdditionalDetails"],
-    })
-    .populate({
-      path: "pastStudents.studentId",
-      match: { "pastTeachers.teacherprofileId": { $eq: this._id } },
-      select: [
-        "pastTeachers.pastentrymessage",
-        "pastTeachers.pastjoiningDate",
-        "pastTeachers.leavingDate",
-        "pastTeachers.pastleavingmessage",
-      ],
-    });
+// teacherProfileSchema.pre(/^find/, function(next) {
+//   this.populate({
+//     path: "pendingRequests",
+//     select: ["_id", "name", "AdditionalDetails"],
+//   })
+//     .populate({
+//       path: "pendingRequests",
+//       match: { "PendingRequestSent.teacherprofileId": { $eq: this._id } },
+//       select: ["PendingRequestSent.pendingentrymessage"],
+//     })
+//     .populate({
+//       path: "currentStudents",
+//       select: ["_id", "name", "AdditionalDetails"],
+//     })
+//     .populate({
+//       path: "currentStudents",
+//       match: { "subscribedTeachers.teacherprofileId": { $eq: this._id } },
+//       select: [
+//         "subscribedTeachers.subscribedentrymessage",
+//         "subscribedTeachers.joiningDate",
+//       ],
+//     })
+//     .populate({
+//       path: "pastStudents",
+//       select: ["_id", "name", "AdditionalDetails"],
+//     })
+//     .populate({
+//       path: "pastStudents",
+//       match: { "pastTeachers.teacherprofileId": { $eq: this._id } },
+//       select: [
+//         "pastTeachers.pastentrymessage",
+//         "pastTeachers.pastjoiningDate",
+//         "pastTeachers.leavingDate",
+//         "pastTeachers.pastleavingmessage",
+//       ],
+//     });
 
-  next();
-});
+//   next();
+// });
 
 const TeacherProfile = mongoose.model("teacherProfiles", teacherProfileSchema);
 

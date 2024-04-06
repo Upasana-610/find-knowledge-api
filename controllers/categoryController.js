@@ -4,3 +4,10 @@ const catchAsync = require("./../utils/catchAsync");
 const handleFactory = require("./handlerFactory");
 
 exports.createCategory = handleFactory.createOne(category);
+
+/*
+getAllTeachersbyCategory
+getAllTeachersbySubCategory
+
+
+*/

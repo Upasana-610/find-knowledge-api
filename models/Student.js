@@ -41,12 +41,17 @@ const studentSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
-    AdditionalDetails: String,
+    AdditionalDetails: {
+      type: String,
+      Default: "",
+    },
     subscribedTeachers: [
       {
+        _id: false,
+
         teacherprofileId: {
           type: ObjectId,
-          ref: "teacherprofiles",
+          ref: "teacherProfiles",
         },
         subscribedentrymessage: {
           type: String,
@@ -60,9 +65,10 @@ const studentSchema = new mongoose.Schema(
     ],
     PendingRequestSent: [
       {
+        _id: false,
         teacherprofileId: {
           type: ObjectId,
-          ref: "teacherprofiles",
+          ref: "teacherProfiles",
         },
         pendingentrymessage: {
           type: String,
@@ -72,9 +78,11 @@ const studentSchema = new mongoose.Schema(
     ],
     pastTeachers: [
       {
+        _id: false,
+
         teacherprofileId: {
           type: ObjectId,
-          ref: "teacherprofiles",
+          ref: "teacherProfiles",
         },
         pastentrymessage: {
           type: String,
