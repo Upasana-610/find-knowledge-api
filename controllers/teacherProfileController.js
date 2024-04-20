@@ -5,6 +5,7 @@ const catchAsync = require("./../utils/catchAsync");
 const handleFactory = require("./handlerFactory");
 const AppError = require(".././utils/appError");
 const Student = require("../models/Student");
+const Category = require("./../models/Category");
 
 exports.createTeacherProfile = catchAsync(async (req, res, next) => {
   console.log(req.body);
@@ -196,6 +197,59 @@ exports.updateTeacherProfile = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       user: updatedUser,
+    },
+  });
+});
+
+exports.findTeacherProfileByCategoryOrSubcategory = catchAsync(
+  async (req, res, next) => {
+    let profiles;
+    // console.log(req.params.id);
+    // Check if the ID exists in the subcategory collection
+    const subcategory = await Category.findOne({
+      "subcategories._id": req.params.id,
+    });
+    // console.log(subcategory);
+    // console.log(typeof req.params.id);
+
+    if (subcategory) {
+      // Subcategory ID
+      profiles = await TeacherProfile.find({ subcategory: req.params.id });
+    } else {
+      // Category ID
+      profiles = await TeacherProfile.find({ category: req.params.id });
+      // console.log(profiles);
+    }
+
+    // Return the found profiles
+    res.status(200).json({
+      status: "success",
+      data: {
+        teacher_profiles: profiles,
+      },
+    });
+  }
+);
+
+exports.getAllTeacherProfiles = handleFactory.getAll(TeacherProfile);
+
+exports.getStudentsForTeacherProfile = catchAsync(async (req, res, next) => {
+  const teacherProfile = await TeacherProfile.findById(req.params.id)
+    .populate("currentStudents")
+    .populate("pendingRequests")
+    .populate("pastStudents")
+    .lean();
+
+  if (!teacherProfile) {
+    return next(new AppError("Could not get Students", 500));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      currentStudents: teacherProfile.currentStudents,
+      pendingRequests: teacherProfile.pendingRequests,
+      pastStudents: teacherProfile.pastStudents,
     },
   });
 });

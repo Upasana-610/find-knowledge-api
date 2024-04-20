@@ -158,15 +158,12 @@ studentSchema.methods.createPasswordResetToken = function() {
 studentSchema.pre(/^find/, function(next) {
   this.populate({
     path: "subscribedTeachers.teacherprofileId",
-    select: ["_id", "username", "category", "subcategory"],
   })
     .populate({
       path: "PendingRequestSent.teacherprofileId",
-      select: ["_id", "username", "category", "subcategory"],
     })
     .populate({
       path: "pastTeachers.teacherprofileId",
-      select: ["_id", "username", "category", "subcategory"],
     });
 
   next();

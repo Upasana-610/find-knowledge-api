@@ -54,7 +54,6 @@ const teacherSchema = new mongoose.Schema(
 teacherSchema.pre(/^find/, function(next) {
   this.populate({
     path: "teacherProfiles",
-    select: ["_id", "username", "category", "subcategory"],
   });
   next();
 });
@@ -62,7 +61,6 @@ teacherSchema.pre(/^find/, function(next) {
 teacherSchema.pre("save", function(next) {
   this.populate({
     path: "teacherProfiles",
-    select: ["_id", "username", "category", "subcategory"],
   });
   next();
 });

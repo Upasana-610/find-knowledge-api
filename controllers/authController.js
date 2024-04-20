@@ -85,8 +85,8 @@ exports.protect = (Model, jwtToken) =>
       jwtfrombody = req.body.studentjwt;
       cookie = req.cookies.studentjwt;
     } else {
-      cookie = req.cookies.teacherjwt;
       jwtfrombody = req.body.teacherjwt;
+      cookie = req.cookies.teacherjwt;
     }
     console.log(cookie);
 

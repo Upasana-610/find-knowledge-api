@@ -26,8 +26,8 @@ const teacherProfileSchema = new mongoose.Schema(
     subcategory: {
       type: ObjectId,
       ref: "categories",
-      foreignField: "subcategories._id",
-      localField: "_id",
+      foreignField: "subcategories.$[]._id",
+      localField: "subcategory",
       required: [true, "Please choose your sub-category"],
     },
     active: {
@@ -102,45 +102,13 @@ const teacherProfileSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// teacherProfileSchema.pre(/^find/, function(next) {
-//   this.populate({
-//     path: "pendingRequests",
-//     select: ["_id", "name", "AdditionalDetails"],
-//   })
-//     .populate({
-//       path: "pendingRequests",
-//       match: { "PendingRequestSent.teacherprofileId": { $eq: this._id } },
-//       select: ["PendingRequestSent.pendingentrymessage"],
-//     })
-//     .populate({
-//       path: "currentStudents",
-//       select: ["_id", "name", "AdditionalDetails"],
-//     })
-//     .populate({
-//       path: "currentStudents",
-//       match: { "subscribedTeachers.teacherprofileId": { $eq: this._id } },
-//       select: [
-//         "subscribedTeachers.subscribedentrymessage",
-//         "subscribedTeachers.joiningDate",
-//       ],
-//     })
-//     .populate({
-//       path: "pastStudents",
-//       select: ["_id", "name", "AdditionalDetails"],
-//     })
-//     .populate({
-//       path: "pastStudents",
-//       match: { "pastTeachers.teacherprofileId": { $eq: this._id } },
-//       select: [
-//         "pastTeachers.pastentrymessage",
-//         "pastTeachers.pastjoiningDate",
-//         "pastTeachers.leavingDate",
-//         "pastTeachers.pastleavingmessage",
-//       ],
-//     });
+teacherProfileSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: "category",
+  });
 
-//   next();
-// });
+  next();
+});
 
 const TeacherProfile = mongoose.model("teacherProfiles", teacherProfileSchema);
 

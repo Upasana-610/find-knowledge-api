@@ -357,14 +357,23 @@ exports.removeStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-/*
+exports.getCurrentStudentsForTeacherProfile = catchAsync(
+  async (req, res, next) => {
+    const teacherProfile = await TeacherProfile.findById(req.user._id)
+      .populate("currentStudents")
+      .lean();
 
-editTeacher
-protect
-deleteTeacher***
+    if (!teacherProfile) {
+      return next(
+        new AppError("Student does not exist in current student list.", 500)
+      );
+    }
 
- */
-/*
-getAllTeacherProfiles
-
-*/
+    res.status(200).json({
+      status: "success",
+      data: {
+        currentStudents: teacherProfile.currentStudents,
+      },
+    });
+  }
+);
