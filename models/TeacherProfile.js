@@ -13,6 +13,12 @@ const teacherProfileSchema = new mongoose.Schema(
       type: ObjectId,
       required: [true, "Teacher Profile must belong to a teacher"],
     },
+    email: {
+      type: String,
+      required: [true, "Please provide your email"],
+      lowercase: true,
+      validate: [validator.isEmail, "Please provide a valid email"],
+    },
     username: {
       type: String,
       required: [true, "Please tell us your name"],
